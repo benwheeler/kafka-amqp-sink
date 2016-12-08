@@ -103,6 +103,7 @@ public class AMQPSinkTaskTest {
     deliverEvents("first event");
 
     verify(channel, never()).waitForConfirmsOrDie(CONFIRM_TIMEOUT);
+    verify(context).timeout(RETRY_TIMEOUT);
     verifyConnectionClosed();
   }
 
@@ -113,6 +114,7 @@ public class AMQPSinkTaskTest {
 
     deliverEvents("first event");
 
+    verify(context).timeout(RETRY_TIMEOUT);
     verify(channel, never()).close();
     verify(connection).close();
   }
@@ -123,13 +125,9 @@ public class AMQPSinkTaskTest {
 
     deliverEvents("first event");
 
+    verify(context).timeout(RETRY_TIMEOUT);
     verify(channel, never()).close();
     verify(connection, never()).close();
-  }
-
-  @Test
-  public void retryTimeoutSetInContext() throws Exception {
-    verify(context).timeout(RETRY_TIMEOUT);
   }
 
   private void deliverEvents(String... eventContents) {
